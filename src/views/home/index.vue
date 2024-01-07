@@ -4,214 +4,80 @@
       <div class="top">
         <div class="text">
           <h1 @click="refreshPage">All Animals</h1>
-          <span>这是一个上传动物图片并识别的网站</span>
+          <span>
+            这是一个动物科普网站，您可以上传一张图片，我们来告诉您这是什么动物
+          </span>
         </div>
-        <el-button>上传图片</el-button>
+        <!-- <el-button class="uploadButton">上传图片</el-button> -->
+        <el-button class="uploadButton" @click="showDialog">
+          Upload
+          <el-icon class="el-icon--right"><Upload /></el-icon>
+        </el-button>
       </div>
       <div class="grid-container">
-        <div class="grid-item" v-for="(animal, index) in animals" :key="animal">
-          <h2>{{ animal }}</h2>
-          <span>{{ animalsChinese[index] }}</span>
+        <div
+          class="grid-item"
+          v-for="(animal, index) in animalsList"
+          :key="animal"
+        >
+          <div class="text">
+            <h2>{{ animal }}</h2>
+            <span>{{ animalsChineseList[index] }}</span>
+          </div>
+          <div class="logo">
+            <SvgIcon :name="animal" width="30" height="30"></SvgIcon>
+          </div>
         </div>
       </div>
+      <div class="foot"></div>
+      <BackTop></BackTop>
+      <el-dialog v-model="flag" :show-close="false">
+        <template #header="{ close, titleId, titleClass }">
+          <div class="my-header">
+            <h4 :id="titleId" :class="titleClass">This is a custom header!</h4>
+            <el-button type="danger" @click="close">
+              <el-icon class="el-icon--left"><CircleCloseFilled /></el-icon>
+              Close
+            </el-button>
+          </div>
+        </template>
+      </el-dialog>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-const animals = [
-  'antelope',
-  'badger',
-  'bat',
-  'bear',
-  'bee',
-  'beetle',
-  'bison',
-  'boar',
-  'butterfly',
-  'cat',
-  'caterpillar',
-  'chimpanzee',
-  'cockroach',
-  'cow',
-  'coyote',
-  'crab',
-  'crow',
-  'deer',
-  'dog',
-  'dolphin',
-  'donkey',
-  'dragonfly',
-  'duck',
-  'eagle',
-  'elephant',
-  'flamingo',
-  'fly',
-  'fox',
-  'goat',
-  'goldfish',
-  'goose',
-  'gorilla',
-  'grasshopper',
-  'hamster',
-  'hare',
-  'hedgehog',
-  'hippopotamus',
-  'hornbill',
-  'horse',
-  'hummingbird',
-  'hyena',
-  'jellyfish',
-  'kangaroo',
-  'koala',
-  'ladybugs',
-  'leopard',
-  'lion',
-  'lizard',
-  'lobster',
-  'mosquito',
-  'moth',
-  'mouse',
-  'octopus',
-  'okapi',
-  'orangutan',
-  'otter',
-  'owl',
-  'ox',
-  'oyster',
-  'panda',
-  'parrot',
-  'pelecaniformes',
-  'penguin',
-  'pig',
-  'pigeon',
-  'porcupine',
-  'possum',
-  'raccoon',
-  'rat',
-  'reindeer',
-  'rhinoceros',
-  'sandpiper',
-  'seahorse',
-  'seal',
-  'shark',
-  'sheep',
-  'snake',
-  'sparrow',
-  'squid',
-  'squirrel',
-  'starfish',
-  'swan',
-  'tiger',
-  'turkey',
-  'turtle',
-  'whale',
-  'wolf',
-  'wombat',
-  'woodpecker',
-  'zebra',
-]
-const animalsChinese = [
-  '羚羊',
-  '獾',
-  '蝙蝠',
-  '熊',
-  '蜜蜂',
-  '甲虫',
-  '野牛',
-  '野猪',
-  '蝴蝶',
-  '猫',
-  '毛虫',
-  '黑猩猩',
-  '蟑螂',
-  '奶牛',
-  '郊狼',
-  '螃蟹',
-  '乌鸦',
-  '鹿',
-  '狗',
-  '海豚',
-  '驴',
-  '蜻蜓',
-  '鸭子',
-  '鹰',
-  '大象',
-  '火烈鸟',
-  '苍蝇',
-  '狐狸',
-  '山羊',
-  '金鱼',
-  '鹅',
-  '大猩猩',
-  '蚱蜢',
-  '仓鼠',
-  '野兔',
-  '刺猬',
-  '河马',
-  '犀鸟',
-  '马',
-  '蜂鸟',
-  '鬣狗',
-  '水母',
-  '袋鼠',
-  '考拉',
-  '瓢虫',
-  '豹',
-  '狮子',
-  '蜥蜴',
-  '龙虾',
-  '蚊子',
-  '蛾子',
-  '老鼠',
-  '章鱼',
-  '河马',
-  '猩猩',
-  '水獭',
-  '猫头鹰',
-  '牛',
-  '牡蛎',
-  '熊猫',
-  '鹦鹉',
-  '鹈鹕',
-  '企鹅',
-  '猪',
-  '鸽子',
-  '豪猪',
-  '负鼠',
-  '浣熊',
-  '老鼠',
-  '驯鹿',
-  '犀牛',
-  '滨鹬',
-  '海马',
-  '海豹',
-  '鲨鱼',
-  '绵羊',
-  '蛇',
-  '麻雀',
-  '鱿鱼',
-  '松鼠',
-  '海星',
-  '天鹅',
-  '老虎',
-  '火鸡',
-  '乌龟',
-  '鲸鱼',
-  '狼',
-  '袋熊',
-  '啄木鸟',
-  '斑马',
-]
+import { ref, onMounted } from 'vue'
+import { reqAnimals, reqAnimalsChinese } from '@/api/animals'
+import { Upload, CircleCloseFilled } from '@element-plus/icons-vue'
+
+const animalsList = ref<string[]>([])
+const animalsChineseList = ref<string[]>([])
+let flag = ref(false)
 
 function refreshPage() {
   location.reload()
 }
+
+function showDialog() {
+  flag.value = !flag.value
+}
+
+async function fetchData() {
+  try {
+    const resAnimals = await reqAnimals()
+    const resAnimalsChinese = await reqAnimalsChinese()
+
+    animalsList.value = resAnimals.data.animals
+    animalsChineseList.value = resAnimalsChinese.data.animalsChinese
+  } catch (error) {
+    console.error('Error fetching data:', error)
+  }
+}
+onMounted(() => {
+  fetchData()
+})
 </script>
 <style lang="scss" scoped>
-.grid-content {
-  border-radius: 4px;
-  min-height: 36px;
-}
 .box {
   width: 100%;
   background-color: $background-color;
@@ -233,15 +99,31 @@ function refreshPage() {
           color: initial;
           transition: color 0.3s ease;
           cursor: pointer;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica,
+            Arial, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+            'Liberation Sans', 'PingFang SC', 'Microsoft YaHei',
+            'Hiragino Sans GB', 'Wenquanyi Micro Hei', 'WenQuanYi Zen Hei',
+            'ST Heiti', SimHei, SimSun, 'WenQuanYi Zen Hei Sharp', sans-serif;
 
           &:hover {
-            color: rgb(255, 140, 0);
+            color: $active-font-color;
           }
         }
         span {
           display: block;
           margin-top: 30px;
-          color: $light-gray-font-color;
+          color: $font-color;
+        }
+      }
+      .uploadButton {
+        background-color: $background-color;
+        border: none;
+        box-shadow: $box-shadow-value;
+        height: 50px;
+        color: gray;
+        &:active {
+          box-shadow: $box-shadow-inser-value;
+          color: $active-font-color;
         }
       }
     }
@@ -251,24 +133,47 @@ function refreshPage() {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-gap: 30px;
-
       .grid-item {
+        // user-select: none;
         background-color: $background-color;
         border-radius: 5px;
-        box-shadow:
-          0.2rem 0.2rem 0.4rem #c8d0e7,
-          -0.2rem -0.2rem 0.4rem #fff;
+        box-shadow: $box-shadow-value;
+        color: #333;
+        &:active {
+          box-shadow: $box-shadow-inser-value;
+          color: $active-font-color;
+        }
         padding: 10px;
         cursor: pointer;
-        h2 {
-          font-size: 24px;
-          font-weight: 600;
-          margin-bottom: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .text {
+          margin-left: 15px;
+          h2 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            letter-spacing: 0.015em;
+          }
+          span {
+            font-size: 14px;
+            font-weight: 400;
+            color: #666;
+          }
         }
-        span {
-          font-size: 14px;
+        .logo {
+          margin-right: 25px;
         }
       }
+    }
+    .foot {
+      height: 50px;
+    }
+    .my-header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
     }
   }
 }

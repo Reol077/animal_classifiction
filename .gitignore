@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+model/data/animals
+*.zip
+*.pth
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

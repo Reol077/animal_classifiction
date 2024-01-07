@@ -2,7 +2,7 @@
   <div class="box">
     <div class="inner_box">
       <!-- 左侧使用svg图标 -->
-      <SvgIcon name="404" width="240px" height="240px"></SvgIcon>
+      <SvgIcon name="404" width="240px" height="240px" color="pink"></SvgIcon>
       <!-- 右侧为文本内容 -->
       <div class="text">
         <h1>404</h1>
@@ -27,15 +27,15 @@ $font-color: #003b64;
   gap: 10px;
   height: 100vh;
   // 渐变背景色
-  background: linear-gradient(to bottom, lightgray 50%, white 50%);
+  background: linear-gradient(to bottom, $background-color 50%, #fff 50%);
 
   .inner_box {
     width: 60%;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: white;
-    box-shadow: 0px 0px 10px 5px rgba(0, 0, 0, 0.3);
+    background-color: $background-color;
+    box-shadow: $box-shadow-value;
     padding: 100px 20px;
 
     .text {

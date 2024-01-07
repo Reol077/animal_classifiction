@@ -1,3 +1,11 @@
 // 给项目提供的全局变量
 $background-color: rgb(228, 235, 248);
-$light-gray-font-color: rgb(153, 153, 153);
+$font-color: rgb(153, 153, 153);
+$active-font-color:rgb(255, 140, 0);
+$backtop-color: rgb(228, 235, 248);
+$box-shadow-value:
+    0.2rem 0.2rem 0.4rem #c8d0e7,
+    -0.2rem -0.2rem 0.4rem #fff;
+$box-shadow-inser-value:
+    inset 0.2rem 0.2rem 0.4rem #c8d0e7,
+    inset -0.2rem -0.2rem 0.4rem #fff;
