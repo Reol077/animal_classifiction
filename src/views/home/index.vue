@@ -17,12 +17,12 @@
       <div class="grid-container">
         <div
           class="grid-item"
-          v-for="(animal, index) in animalsList"
+          v-for="(animal, index) in engAnimalsList"
           :key="animal"
         >
           <div class="text">
             <h2>{{ animal }}</h2>
-            <span>{{ animalsChineseList[index] }}</span>
+            <span>{{ cnAnimalsList[index] }}</span>
           </div>
           <div class="logo">
             <SvgIcon :name="animal" width="30" height="30"></SvgIcon>
@@ -47,11 +47,11 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { reqAnimals, reqAnimalsChinese } from '@/api/animals'
+import { reqAnimals } from '@/api/animals'
 import { Upload, CircleCloseFilled } from '@element-plus/icons-vue'
 
-const animalsList = ref<string[]>([])
-const animalsChineseList = ref<string[]>([])
+const engAnimalsList = ref<string[]>([])
+const cnAnimalsList = ref<string[]>([])
 let flag = ref(false)
 
 function refreshPage() {
@@ -64,11 +64,19 @@ function showDialog() {
 
 async function fetchData() {
   try {
-    const resAnimals = await reqAnimals()
-    const resAnimalsChinese = await reqAnimalsChinese()
+    type Animal = {
+      id: number
+      english_name: string
+      chinese_name: string
+    }
 
-    animalsList.value = resAnimals.data.animals
-    animalsChineseList.value = resAnimalsChinese.data.animalsChinese
+    const Animals: { animals: Animal[] } = await reqAnimals()
+    const animals: Animal[] = Animals.animals
+    const english_name: string[] = animals.map((animal) => animal.english_name)
+    const chinese_name: string[] = animals.map((animal) => animal.chinese_name)
+
+    engAnimalsList.value = english_name
+    cnAnimalsList.value = chinese_name
   } catch (error) {
     console.error('Error fetching data:', error)
   }

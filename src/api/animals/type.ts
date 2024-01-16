@@ -1,16 +1,9 @@
-interface animals {
-  animals: string[]
+interface animal {
+  id: number
+  english_name: string
+  chinese_name: string
 }
-export interface typeAnimals {
-  code: number
-  data: animals
-}
-
-interface animalsChinese {
-  animalsChinese: string[]
-}
-
-export interface typeAnimalsChinese {
-  code: number
-  data: animalsChinese
+export interface Animal {
+  status: number
+  animals: animal[]
 }

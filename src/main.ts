@@ -11,7 +11,7 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 // 导入SVG
 import 'virtual:svg-icons-register'
 // 导入自定义插件：注册整个项目的全局组件
-import gloalComponent from '@/components'
+import globalComponent from '@/components'
 
 // 引入模板的全局样式
 import '@/styles/index.scss'
@@ -28,7 +28,7 @@ app.use(ElementPlus, {
   locale: zhCn,
 })
 // 安装自定义插件
-app.use(gloalComponent)
+app.use(globalComponent)
 
 // 安装路由
 app.use(router)

@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 
-model/data/animals
+server/model/data/animals
 *.zip
 *.pth
 
