@@ -12,6 +12,19 @@ class AnimalsController {
       }
     })
   }
+
+  exist = async (req: Request, res: Response) => {
+    const animal = req.body.animal
+    const sql =
+      'select count(*) as flag , english_name as eng , chinese_name as cn from animals where english_name = ?'
+    db.query(sql, [animal], (err, results) => {
+      if (err) {
+        res.send(err)
+      } else {
+        res.send({ status: 0, results })
+      }
+    })
+  }
 }
 
 // 创建一个上述类的一个实例，将其导出

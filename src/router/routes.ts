@@ -10,6 +10,10 @@ export const constantRoute = [
     name: 'home',
   },
   {
+    path: '/show/:animal',
+    component: () => import('@/views/home/show.vue'),
+  },
+  {
     path: '/404',
     component: () => import('@/views/404/index.vue'),
     name: '404',

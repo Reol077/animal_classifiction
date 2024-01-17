@@ -19,6 +19,7 @@
           class="grid-item"
           v-for="(animal, index) in engAnimalsList"
           :key="animal"
+          @click="toShow(animal)"
         >
           <div class="text">
             <h2>{{ animal }}</h2>
@@ -34,13 +35,26 @@
       <el-dialog v-model="flag" :show-close="false">
         <template #header="{ close, titleId, titleClass }">
           <div class="my-header">
-            <h4 :id="titleId" :class="titleClass">This is a custom header!</h4>
+            <h4 :id="titleId" :class="titleClass">上传一张动物图片吧！</h4>
             <el-button type="danger" @click="close">
               <el-icon class="el-icon--left"><CircleCloseFilled /></el-icon>
               Close
             </el-button>
           </div>
         </template>
+        <el-upload
+          drag
+          action="http://localhost:5173/api/upload"
+          :limit="1"
+          :before-upload="handleLoading"
+          :on-success="handleSuccess"
+        >
+          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+          <div class="el-upload__text">
+            将文件拖拽至此或者
+            <em>点击上传</em>
+          </div>
+        </el-upload>
       </el-dialog>
     </div>
   </div>
@@ -48,8 +62,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { reqAnimals } from '@/api/animals'
-import { Upload, CircleCloseFilled } from '@element-plus/icons-vue'
+import {
+  Upload,
+  CircleCloseFilled,
+  UploadFilled,
+} from '@element-plus/icons-vue'
+import { ElLoading } from 'element-plus'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const engAnimalsList = ref<string[]>([])
 const cnAnimalsList = ref<string[]>([])
 let flag = ref(false)
@@ -60,6 +81,20 @@ function refreshPage() {
 
 function showDialog() {
   flag.value = !flag.value
+}
+
+function toShow(animal: string) {
+  router.push('/show/' + animal)
+}
+
+function handleLoading() {
+  ElLoading.service({ fullscreen: true })
+}
+
+function handleSuccess(res: any) {
+  ElLoading.service().close()
+  const label = res[0][0].label
+  router.push('/show/' + label)
 }
 
 async function fetchData() {
@@ -88,7 +123,6 @@ onMounted(() => {
 <style lang="scss" scoped>
 .box {
   width: 100%;
-  background-color: $background-color;
   height: 100%;
   display: flex;
   justify-content: center;
