@@ -22,7 +22,19 @@
           </el-row>
         </el-col>
         <el-col :span="12" class="middle">
-          <div ref="myChart" class="myChart"></div>
+          <div v-if="isShowChart" class="chartBox">
+            <div class="switch">
+              <el-switch
+                v-model="lang"
+                inline-prompt
+                active-text="英"
+                inactive-text="汉"
+                size="large"
+                @change="switchLang"
+              />
+            </div>
+            <div ref="myChart" class="myChart"></div>
+          </div>
         </el-col>
         <el-col :span="6" class="right"></el-col>
       </el-row>
@@ -31,9 +43,10 @@
 </template>
 <script lang="ts" setup>
 import useAnimalStore from '@/store/modules/animals'
+import useIdentifyStore from '@/store/modules/identify'
 import { useRouter } from 'vue-router'
-import { ref, onMounted } from 'vue'
-import { reqExist } from '@/api/animals'
+import { ref, onMounted, nextTick } from 'vue'
+import { reqExist, reqGetCnName } from '@/api/animals'
 import { ECharts, EChartOption, init } from 'echarts'
 
 import 'swiper/css'
@@ -42,9 +55,40 @@ import 'swiper/css/navigation'
 
 const router = useRouter()
 const animalStore = useAnimalStore()
+const identifyStore = useIdentifyStore()
 const currentAnimal: string = String(router.currentRoute.value.params.animal)
 const imageSrc = 'src/assets/image/show_bg/' + currentAnimal + '.jpg'
 const myChart = ref<any>()
+const lang = ref(true)
+let isShowChart = ref(false)
+isShowChart.value = identifyStore.hasValues()
+
+const myCharts = ref<ECharts>()
+const xData = identifyStore.getAllLabels()
+const yData = identifyStore.getAllProbabilities()
+const option: EChartOption = {
+  title: {
+    text: identifyStore.title,
+    left: 'center',
+  },
+  xAxis: {
+    type: 'category',
+    data: xData,
+    axisLabel: {
+      interval: 0,
+      rotate: 0,
+    },
+  },
+  yAxis: {
+    type: 'value',
+  },
+  series: [
+    {
+      data: yData,
+      type: 'bar',
+    },
+  ],
+}
 
 function backup() {
   router.push('/')
@@ -63,25 +107,32 @@ async function loadPage() {
 }
 
 function loadChart() {
-  const myCharts = ref<ECharts>()
+  nextTick(async () => {
+    if (isShowChart.value === true) {
+      myCharts.value = init(myChart.value!)
+      myCharts.value.setOption(option)
+    }
+  })
+}
 
-  myCharts.value = init(myChart.value!)
-  const option: EChartOption = {
-    xAxis: {
-      type: 'category',
-      data: ['猪', '牛', '羊', '猴', '鼠', '虎', '子', '马', '龙', '蛇'],
-    },
-    yAxis: {
-      type: 'value',
-    },
-    series: [
-      {
-        data: [1, 0.5, 0.25, 0, 0.01, 0.01, 0.01, 0.59, 0.03, 0.08],
-        type: 'bar',
-      },
-    ],
+async function switchLang() {
+  const { results } = await reqGetCnName({ engName: xData })
+  const option = myCharts.value!.getOption()
+  if (Array.isArray(option.xAxis)) {
+    const data = option.xAxis[0].data
+    let newData: string[] = []
+    if (lang.value === false) {
+      newData =
+        data?.map((engName) => {
+          const translation = results.find((name) => name.eng === engName)
+          return translation ? String(translation.cn) : String(engName)
+        }) || []
+    } else {
+      newData = xData
+    }
+    option.xAxis[0].data = newData
+    myCharts.value?.setOption(option)
   }
-  myCharts.value.setOption(option)
 }
 
 onMounted(async () => {
@@ -106,7 +157,7 @@ onMounted(async () => {
       box-shadow: $box-shadow-value;
       cursor: pointer;
       &:active {
-        box-shadow: $box-shadow-inser-value;
+        box-shadow: $box-shadow-inset-value;
       }
     }
     .text {
@@ -132,9 +183,20 @@ onMounted(async () => {
       }
     }
     .middle {
-      .myChart {
-        width: 100%;
-        height: 300px;
+      .chartBox {
+        .switch {
+          display: flex;
+          justify-content: flex-end;
+
+          .el-switch {
+            --el-switch-on-color: #4169e1;
+            --el-switch-off-color: #cd5c5c;
+          }
+        }
+        .myChart {
+          width: 100%;
+          height: 300px;
+        }
       }
     }
   }

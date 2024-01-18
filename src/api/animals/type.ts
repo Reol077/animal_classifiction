@@ -7,6 +7,7 @@ export interface Animal {
   status: number
   animals: animal[]
 }
+
 interface exist {
   flag: number
   eng: string
@@ -18,4 +19,17 @@ export interface Exist {
 }
 export interface ExistAnimal {
   animal: string
+}
+
+export interface CnName {
+  engName: string[]
+}
+
+interface NameResults {
+  eng: string
+  cn: string
+}
+export interface AnimalTranslation {
+  status: number
+  results: NameResults[]
 }

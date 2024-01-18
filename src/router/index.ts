@@ -8,10 +8,11 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes: constantRoute,
   //滚动行为
-  scrollBehavior() {
-    return {
-      left: 0,
-      top: 0,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0, left: 0 }
     }
   },
 })

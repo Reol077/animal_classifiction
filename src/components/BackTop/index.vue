@@ -13,7 +13,7 @@
     0.2rem 0.2rem 0.4rem #c8d0e7,
     -0.2rem -0.2rem 0.4rem #fff;
   &:active {
-    box-shadow: $box-shadow-inser-value;
+    box-shadow: $box-shadow-inset-value;
   }
 }
 </style>

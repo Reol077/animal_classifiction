@@ -20,7 +20,7 @@ class UploadController {
         console.log('Python脚本执行结果:', result)
 
         // 返回结果给调用方
-        res.json(result)
+        res.json({ labels: result[0] })
       } catch (parseError) {
         console.error(`解析Python脚本输出时出错: ${parseError}`)
         res.status(500).json({ error: 'Internal Server Error' })

@@ -8,6 +8,9 @@ export const constantRoute = [
     path: '/home',
     component: () => import('@/views/home/index.vue'),
     name: 'home',
+    meta: {
+      keepAlive: false, //设置页面是否需要使用缓存
+    },
   },
   {
     path: '/show/:animal',

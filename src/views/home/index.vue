@@ -60,7 +60,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUpdated, nextTick } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import { reqAnimals } from '@/api/animals'
 import {
   Upload,
@@ -69,10 +70,14 @@ import {
 } from '@element-plus/icons-vue'
 import { ElLoading } from 'element-plus'
 import { useRouter } from 'vue-router'
+import useIdentifyStore from '@/store/modules/identify'
+import usePageStore from '@/store/modules/page'
 
 const router = useRouter()
 const engAnimalsList = ref<string[]>([])
 const cnAnimalsList = ref<string[]>([])
+const identifyStore = useIdentifyStore()
+const pageStore = usePageStore()
 let flag = ref(false)
 
 function refreshPage() {
@@ -92,8 +97,9 @@ function handleLoading() {
 }
 
 function handleSuccess(res: any) {
+  identifyStore.setValue(res)
   ElLoading.service().close()
-  const label = res[0][0].label
+  const label = res.labels[0].label
   router.push('/show/' + label)
 }
 
@@ -116,6 +122,20 @@ async function fetchData() {
     console.error('Error fetching data:', error)
   }
 }
+onUpdated(() => {
+  nextTick(() => {
+    window.scrollTo(0, pageStore.getScrollY())
+    console.log('当前偏移：')
+    console.log(window.scrollY)
+  })
+})
+
+onBeforeRouteLeave((_to, _from, next) => {
+  pageStore.setScrollY(window.scrollY)
+  console.log('我要走了，记录一下')
+  console.log(window.scrollY)
+  next()
+})
 onMounted(() => {
   fetchData()
 })
@@ -123,7 +143,6 @@ onMounted(() => {
 <style lang="scss" scoped>
 .box {
   width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
 
@@ -164,7 +183,7 @@ onMounted(() => {
         height: 50px;
         color: gray;
         &:active {
-          box-shadow: $box-shadow-inser-value;
+          box-shadow: $box-shadow-inset-value;
           color: $active-font-color;
         }
       }
@@ -182,7 +201,7 @@ onMounted(() => {
         box-shadow: $box-shadow-value;
         color: #333;
         &:active {
-          box-shadow: $box-shadow-inser-value;
+          box-shadow: $box-shadow-inset-value;
           color: $active-font-color;
         }
         padding: 10px;

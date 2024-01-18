@@ -4,7 +4,7 @@ type Animal = {
   active_animal: string
   translate: string
 }
-const useAnimalStore = defineStore('animal', {
+const useAnimalStore = defineStore('animals', {
   state: (): Animal => {
     return {
       active_animal: '',

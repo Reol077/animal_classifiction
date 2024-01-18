@@ -25,6 +25,18 @@ class AnimalsController {
       }
     })
   }
+
+  getCnName = async (req: Request, res: Response) => {
+    const engName = req.body.engName
+    const sql = `select english_name as eng , chinese_name as cn from animals where english_name in (?)`
+    db.query(sql, [engName], (err, results) => {
+      if (err) {
+        res.send(err)
+      } else {
+        res.send({ status: 0, results })
+      }
+    })
+  }
 }
 
 // 创建一个上述类的一个实例，将其导出
