@@ -97,7 +97,8 @@ function handleLoading() {
 }
 
 function handleSuccess(res: any) {
-  identifyStore.setValue(res)
+  identifyStore.setLabels(res)
+  identifyStore.setImageSrc()
   ElLoading.service().close()
   const label = res.labels[0].label
   router.push('/show/' + label)
@@ -125,15 +126,11 @@ async function fetchData() {
 onUpdated(() => {
   nextTick(() => {
     window.scrollTo(0, pageStore.getScrollY())
-    console.log('当前偏移：')
-    console.log(window.scrollY)
   })
 })
 
 onBeforeRouteLeave((_to, _from, next) => {
   pageStore.setScrollY(window.scrollY)
-  console.log('我要走了，记录一下')
-  console.log(window.scrollY)
   next()
 })
 onMounted(() => {

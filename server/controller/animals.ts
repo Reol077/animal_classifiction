@@ -37,6 +37,19 @@ class AnimalsController {
       }
     })
   }
+
+  getBilibili = async (req: Request, res: Response) => {
+    const name = req.body.name
+    console.log(name)
+    const sql = `select bilibili from animals where english_name = ?`
+    db.query(sql, [name], (err, results) => {
+      if (err) {
+        res.send(err)
+      } else {
+        res.send({ status: 0, results })
+      }
+    })
+  }
 }
 
 // 创建一个上述类的一个实例，将其导出

@@ -33,3 +33,16 @@ export interface AnimalTranslation {
   status: number
   results: NameResults[]
 }
+
+export interface Name {
+  name: string
+}
+
+interface bilibili {
+  bilibili: string
+}
+
+export interface Bilibili {
+  status: number
+  results: bilibili[]
+}
