@@ -237,7 +237,7 @@ async function getBilibili() {
 async function getwiki() {
   const { results } = await reqGetWiki({ name: currentAnimal })
   wiki.value = String(results[0].wiki)
-  console.log(wiki);
+  console.log(wiki)
 }
 
 onMounted(() => {
@@ -388,6 +388,7 @@ onMounted(() => {
       max-width: 100%;
       height: auto;
       overflow: hidden;
+      border-radius: 0 0 15px 15px;
 
       .inner_iframe {
         position: absolute;
@@ -395,7 +396,6 @@ onMounted(() => {
         left: 0;
         width: 100%;
         height: 100%;
-        border-radius: 0 0 15px 15px;
       }
     }
     .thirdLine {
