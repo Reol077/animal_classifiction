@@ -6,5 +6,6 @@ animalsRouter.get('/animals', animalsController.animals)
 animalsRouter.post('/exist', animalsController.exist)
 animalsRouter.post('/getCnName', animalsController.getCnName)
 animalsRouter.post('/getBilibili', animalsController.getBilibili)
+animalsRouter.post('/getWiki', animalsController.getWiki)
 
 export default animalsRouter

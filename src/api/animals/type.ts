@@ -46,3 +46,12 @@ export interface Bilibili {
   status: number
   results: bilibili[]
 }
+
+interface wiki {
+  wiki: string
+}
+
+export interface Wiki {
+  status: number
+  results: wiki[]
+}

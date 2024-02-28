@@ -7,7 +7,8 @@ interface Label {
 
 interface Labels {
   labels: Label[]
-  title: string
+  entitle: string
+  zhtitle: string
   imageSrc: string
 }
 
@@ -15,7 +16,8 @@ const useIdentifyStore = defineStore('identify', {
   state: (): Labels => {
     return {
       labels: [],
-      title: '识别概率',
+      zhtitle: '识别概率',
+      entitle: 'Identification Probability',
       imageSrc: '',
     }
   },

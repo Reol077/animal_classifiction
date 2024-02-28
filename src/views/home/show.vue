@@ -28,7 +28,7 @@
                 <el-switch
                   v-model="lang"
                   inline-prompt
-                  active-text="英"
+                  active-text="EN"
                   inactive-text="汉"
                   size="large"
                   @change="switchLang"
@@ -57,11 +57,35 @@
           </div>
         </el-col>
       </el-row>
-      <el-row :gutter="20" class="secondLine">
-        <el-col :span="24" class="left">
+      <el-row class="secondLine">
+        <el-col :span="24" class="about">
+          <span>相关介绍</span>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20" class="thirdLine">
+        <el-col :span="24" class="box">
+          <div class="card">
+            <div class="header">维基百科-{{ animalStore.translate }}</div>
+            <div class="iframe">
+              <iframe
+                :src="wiki"
+                border="0"
+                scrolling="yes"
+                frameborder="no"
+                framespacing="0"
+                allowfullscreen="true"
+                sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts"
+                class="inner_iframe"
+              ></iframe>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20" class="forthLine">
+        <el-col :span="24" class="box">
           <div class="card">
             <div class="header">哔哩哔哩-{{ animalStore.translate }}</div>
-            <div class="bilibili">
+            <div class="iframe">
               <iframe
                 :src="bilibili"
                 scrolling="no"
@@ -70,7 +94,7 @@
                 framespacing="0"
                 allowfullscreen="true"
                 sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts"
-                class="video"
+                class="inner_iframe"
               ></iframe>
             </div>
           </div>
@@ -85,7 +109,12 @@ import useAnimalStore from '@/store/modules/animals'
 import useIdentifyStore from '@/store/modules/identify'
 import { useRouter } from 'vue-router'
 import { ref, onMounted, nextTick } from 'vue'
-import { reqExist, reqGetCnName, reqGetBilibili } from '@/api/animals'
+import {
+  reqExist,
+  reqGetCnName,
+  reqGetBilibili,
+  reqGetWiki,
+} from '@/api/animals'
 import { ECharts, EChartOption, init } from 'echarts'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { ElLoading } from 'element-plus'
@@ -103,6 +132,7 @@ const imageSrc =
 const myChart = ref<any>()
 const lang = ref(false)
 let bilibili = ref<string>('')
+let wiki = ref<string>('https://zh.wikipedia.org/wiki/')
 let isShowChart = ref(false)
 isShowChart.value = identifyStore.hasValues()
 
@@ -111,7 +141,7 @@ const xData = identifyStore.getAllLabels()
 const yData = identifyStore.getAllProbabilities()
 const option: EChartOption = {
   title: {
-    text: identifyStore.title,
+    text: identifyStore.entitle,
     left: 'center',
   },
   xAxis: {
@@ -183,12 +213,20 @@ async function switchLang() {
           const translation = results.find((name) => name.eng === engName)
           return translation ? String(translation.cn) : String(engName)
         }) || []
+      console.log(option.title)
     } else {
       newData = xData
     }
     option.xAxis[0].data = newData
-    myCharts.value?.setOption(option)
   }
+  if (Array.isArray(option.title)) {
+    if (lang.value === false) {
+      option.title[0].text = identifyStore.zhtitle
+    } else {
+      option.title[0].text = identifyStore.entitle
+    }
+  }
+  myCharts.value?.setOption(option)
 }
 
 async function getBilibili() {
@@ -196,10 +234,17 @@ async function getBilibili() {
   bilibili.value = String(results[0].bilibili) + '&high_quality=1&danmaku=0'
 }
 
+async function getwiki() {
+  const { results } = await reqGetWiki({ name: currentAnimal })
+  wiki.value = String(results[0].wiki)
+  console.log(wiki);
+}
+
 onMounted(() => {
   loadPage()
   loadChart()
   getBilibili()
+  getwiki()
 })
 </script>
 <style lang="scss" scoped>
@@ -256,9 +301,10 @@ onMounted(() => {
             .switch {
               display: flex;
               justify-content: flex-end;
+              height: 30px;
 
               .el-switch {
-                padding-top: 20px;
+                padding-top: 10px;
                 padding-right: 20px;
                 border-radius: 25px;
                 --el-switch-on-color: #4169e1;
@@ -267,7 +313,7 @@ onMounted(() => {
             }
             .myChart {
               width: 100%;
-              height: 300px;
+              height: 270px;
             }
           }
           .uploadBox {
@@ -297,46 +343,76 @@ onMounted(() => {
     }
     .secondLine {
       margin-top: 50px;
-      .left {
+      .about {
         display: flex;
         align-items: center;
         justify-content: center;
-        .card {
-          box-shadow: $box-shadow-value;
-          border-radius: 15px;
-          width: 70%;
 
-          .header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 50px;
-            font-size: 18px;
-            letter-spacing: 5px;
-            font-family: 'San Francisco';
-            font-weight: 700;
-            color: #fff;
-            background-color: rgb(251, 114, 153);
-            border-radius: 15px 15px 0 0;
-          }
-          .bilibili {
-            position: relative;
-            padding-bottom: 56.25%;
-            overflow: hidden;
-            max-width: 100%;
-            height: auto;
+        span {
+          font-size: 32px;
+          letter-spacing: 5px;
+          font-family: 'San Francisco';
+          font-weight: 600;
+          color: $font-color-deep;
+        }
+      }
+    }
+    .box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      box-shadow: $box-shadow-value;
+      border-radius: 15px;
+      width: 70%;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 50px;
+      font-size: 20px;
+      letter-spacing: 5px;
+      font-family: 'San Francisco';
+      font-weight: 700;
+      color: #fff;
+      background-color: rgb(251, 114, 153);
+      border-radius: 15px 15px 0 0;
+    }
 
-            .video {
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              border-radius: 0 0 15px 15px;
-            }
+    .iframe {
+      position: relative;
+      padding-bottom: 56.25%;
+      overflow: hidden;
+      max-width: 100%;
+      height: auto;
+      overflow: hidden;
+
+      .inner_iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 0 0 15px 15px;
+      }
+    }
+    .thirdLine {
+      margin-top: 50px;
+      .box {
+        .header {
+          background-color: rgb(188, 190, 192);
+        }
+        .iframe {
+          .inner_iframe {
+            width: calc(100% + 16px);
           }
         }
       }
+    }
+    .forthLine {
+      margin-top: 50px;
     }
   }
 }

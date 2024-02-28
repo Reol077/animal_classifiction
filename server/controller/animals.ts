@@ -40,8 +40,19 @@ class AnimalsController {
 
   getBilibili = async (req: Request, res: Response) => {
     const name = req.body.name
-    console.log(name)
     const sql = `select bilibili from animals where english_name = ?`
+    db.query(sql, [name], (err, results) => {
+      if (err) {
+        res.send(err)
+      } else {
+        res.send({ status: 0, results })
+      }
+    })
+  }
+
+  getWiki = async (req: Request, res: Response) => {
+    const name = req.body.name
+    const sql = `select wiki from animals where english_name = ?`
     db.query(sql, [name], (err, results) => {
       if (err) {
         res.send(err)
